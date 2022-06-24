@@ -125,12 +125,16 @@ static void *uevent_loop(void *param)
 		} else if(err > 0) {
 			if (!ctx->enable || !ctx->system_control)
 				continue;
+#ifdef LOG_NDBUG
 			ALOGD("poll revent:%02x\n", pfd[0].revents);
+#endif
 			memset(&cec_event, 0, sizeof(hdmi_event_t));
 			if (pfd[0].revents & (POLLIN)) {
 				struct cec_msg cecframe;
 
+#ifdef LOG_NDBUG
 				ALOGD("poll receive msg\n");
+#endif
 				ret = ioctl(pfd[0].fd, CEC_RECEIVE, &cecframe);
 				if (!ret) {
 					cec_event.type = HDMI_EVENT_CEC_MESSAGE;
@@ -142,8 +146,10 @@ static void *uevent_loop(void *param)
 					if (!validcecmessage(cec_event)) {
 						for (ret = 0; ret < cec_event.cec.length; ret++)
 						     cec_event.cec.body [ret + 1] = cecframe.msg[ret + 2];
+#ifdef LOG_NDBUG
 						for (i = 0; i < cecframe.len; i++)
 							ALOGD("poll receive msg[%d]:%02x\n", i, cecframe.msg[i]);
+#endif
 						if (ctx->event_callback)
 							ctx->event_callback(&cec_event, ctx->cec_arg);
 					} else {

@@ -36,6 +36,10 @@ LOCAL_SRC_FILES := \
 #LOCAL_C_INCLUDES : = \
 #   bionic/libc/include 
 
+ifeq ($(TARGET_BUILD_VARIANT),userdebug)
+LOCAL_CFLAGS:= -DLOG_NDEBUG"
+endif
+
 LOCAL_MODULE:= hdmi_cec.$(TARGET_BOARD_PLATFORM)
 LOCAL_CFLAGS:= -DLOG_TAG=\"hdmicec\"
 LOCAL_CFLAGS += -fpermissive
